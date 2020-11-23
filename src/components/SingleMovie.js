@@ -3,6 +3,10 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import apiKey from '../secrets'
 
+/**
+ * fetch('/api/endpoint/') to access my backend
+ */
+
 const SingleMovie = (props) => {
   const { movieId } = useParams();
 
