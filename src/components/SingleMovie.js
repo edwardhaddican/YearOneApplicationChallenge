@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import apiKey from '../secrets'
+import apiKey from "../secrets";
 
 /**
  * fetch('/api/endpoint/') to access my backend
@@ -14,21 +14,9 @@ const SingleMovie = (props) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const options = {
-        method: "GET",
-        url: "https://movies-tvshows-data-imdb.p.rapidapi.com/",
-        params: { imdb: movieId, type: "get-movie-details" },
-        headers: {
-          "x-rapidapi-key":
-          apiKey,
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
-        },
-      };
+      const movieData = await axios.get(`/api/movie/${movieId}`);
 
-      const result = await axios.request(options);
-      const resultsData = result.data;
-
-      setSingleMovie(resultsData);
+      setSingleMovie(movieData.data);
     } catch (err) {
       console.log("O no, you have an error", err);
     }

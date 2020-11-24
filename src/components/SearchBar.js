@@ -14,20 +14,22 @@ const SearchBar = (props) => {
    event.preventDefault();
 
    try{
-    const searchTitleOptions = {
-      method: 'GET',
-      url: 'https://movies-tvshows-data-imdb.p.rapidapi.com/',
-      params: {title: searchTitleText, type: 'get-movies-by-title'},
-      headers: {
-        'x-rapidapi-key': apiKey,
-        'x-rapidapi-host': 'movies-tvshows-data-imdb.p.rapidapi.com'
-      }
-    };
+     const results = await axios.get(`/api/movie?search=${searchTitleText}`)
+     console.log('results', results)
+    // const searchTitleOptions = {
+    //   method: 'GET',
+    //   url: 'https://movies-tvshows-data-imdb.p.rapidapi.com/',
+    //   params: {title: searchTitleText, type: 'get-movies-by-title'},
+    //   headers: {
+    //     'x-rapidapi-key': apiKey,
+    //     'x-rapidapi-host': 'movies-tvshows-data-imdb.p.rapidapi.com'
+    //   }
+    // };
 
-    const results = await axios.request(searchTitleOptions)
-    const resultsData = results.data.movie_results
+    // const results = await axios.request(searchTitleOptions)
+    // const resultsData = results.data.movie_results
 
-    setSearchResults(resultsData)
+    setSearchResults(results.data)
 
 
    }catch (err){
