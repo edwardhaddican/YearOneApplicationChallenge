@@ -15,7 +15,7 @@ const SingleMovie = (props) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const movieData = await axios.get(`/api/movie/${movieId}`);
+      const movieData = await axios.get(`/movie/${movieId}`);
 
       setSingleMovie(movieData.data);
     } catch (err) {

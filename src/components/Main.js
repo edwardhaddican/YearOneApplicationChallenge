@@ -10,7 +10,7 @@ import {
 const Main = () => {
   return (
     <div>
-      <h1>Welcome to my App</h1>
+      <h1>Welcome to the hottest spot to search for movies</h1>
       <NavBar />
       <Switch>
         <Route
