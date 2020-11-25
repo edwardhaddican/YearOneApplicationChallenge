@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import apiKey from "../secrets";
+import {Voting} from "./index"
 
 /**
  * fetch('/api/endpoint/') to access my backend
@@ -52,6 +53,9 @@ const SingleMovie = (props) => {
       ) : (
         <p>Genre: No data listed </p>
       )}
+
+      <Voting/>
+
     </div>
   );
 };
