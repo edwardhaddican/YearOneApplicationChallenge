@@ -14,7 +14,7 @@ const SearchBar = (props) => {
    event.preventDefault();
 
    try{
-     const results = await axios.get(`/movie?search=${searchTitleText}`)
+     const results = await axios.get(`/api/movie?search=${searchTitleText}`)
      console.log('results', results)
     // const searchTitleOptions = {
     //   method: 'GET',

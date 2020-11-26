@@ -15,7 +15,7 @@ const SingleMovie = (props) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const movieData = await axios.get(`/movie/${movieId}`);
+      const movieData = await axios.get(`/api/movie/${movieId}`);
 
       setSingleMovie(movieData.data);
     } catch (err) {
@@ -54,7 +54,7 @@ const SingleMovie = (props) => {
         <p>Genre: No data listed </p>
       )}
 
-      <Voting/>
+      <Voting singleMovie={singleMovie} setSingleMovie={setSingleMovie}/>
 
     </div>
   );

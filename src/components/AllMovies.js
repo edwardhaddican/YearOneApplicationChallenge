@@ -19,7 +19,7 @@ const AllMovies = (props) => {
         {searchResults.map((movie, idx) => {
           return (
             <div key={movie.imdb_id} >
-              <Movie movie={movie} />
+              <Movie movie={movie} setSearchResults={setSearchResults}searchResults={searchResults}/>
             </div>
           );
         })}

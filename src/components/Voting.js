@@ -1,17 +1,29 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const Voting = (props) => {
-  const [numberOfThumbsUp, setNumberOfThumbsUp] = useState(0);
-  const [numberOfThumbsDown, setNumberOfThumbsDown] = useState(0);
+  const { singleMovie, setSingleMovie } = props;
 
-  const thumbsUp = () => {};
+  const thumbsUpOrDown = async (isUpvote) => {
+    const { data } = await axios.put(`/api/movie/${singleMovie.imdb_id}`, {
+      isUpvote,
+    });
 
-  const thumbsDown = () => {};
+    setSingleMovie(data);
+  };
+
+  if (!singleMovie) {
+    return null;
+  }
 
   return (
     <div className="voting-main-container">
-      <button onClick={thumbsUp}>{numberOfThumbsUp} &#128077;</button>
-      <button onClick={thumbsDown}>{numberOfThumbsDown} &#128078;</button>
+      <button onClick={() => thumbsUpOrDown(true)}>
+        {singleMovie.thumbsUp || 0} &#128077;
+      </button>
+      <button onClick={() => thumbsUpOrDown(false)}>
+        {singleMovie.thumbsDown || 0} &#128078;
+      </button>
     </div>
   );
 };

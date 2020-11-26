@@ -50,28 +50,42 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  try {
-    const movie = await Movie.create({
-      movieTitle: req.body.movieTitle,
-      thumbsUp: req.body.thumbsUp,
-      thumbsDown: req.body.thumbsDown,
-    });
-    res.status(201).json(movie);
-  } catch (err) {
-    next(err);
-  }
-});
+// router.post("/", async (req, res, next) => {
+//   try {
+//     const movie = await Movie.create({
+//       movieTitle: req.body.movieTitle,
+//       thumbsUp: req.body.thumbsUp,
+//       thumbsDown: req.body.thumbsDown,
+//     });
+//     res.status(201).json(movie);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 router.put("/:id", async (req, res, next) => {
   try {
-    const movie = await Movie.findOne({
+    const isUpvote = req.body.isUpvote;
+
+    const [movie, created] = await Movie.findOrCreate({
       where: {
-        id: req.params.id,
+        imdb_id: req.params.id,
+      },
+      defaults: {
+        thumbsUp: isUpvote ? 1 : 0,
+        thumbsDown: !isUpvote ? 1 : 0,
       },
     });
-    await movie.update(req.body);
-    res.status(200).json(product);
+
+    if (!created) {
+      const updatedMovie = await movie.update({
+        thumbsUp: isUpvote ? movie.thumbsUp + 1 : movie.thumbsUp,
+        thumbsDown: !isUpvote ? movie.thumbsDown + 1 : movie.thumbsDown,
+      });
+      res.json(updatedMovie);
+    } else {
+      res.json(movie);
+    }
   } catch (err) {
     next(err);
   }

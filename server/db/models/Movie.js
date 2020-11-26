@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 
 const Movie = db.define('movie', {
-  movieTitle: {
+  imdb_id: {
     type: Sequelize.STRING,
     allowNull: false
   },
