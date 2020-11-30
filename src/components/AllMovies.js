@@ -16,13 +16,15 @@ const AllMovies = (props) => {
 
       <h2>Movie Search Results:</h2>
       <div className="allMovies_Container">
-        {searchResults.map((movie, idx) => {
+
+
+        {searchResults ? searchResults.map((movie, idx) => {
           return (
             <div key={movie.imdb_id} >
               <Movie movie={movie} setSearchResults={setSearchResults}searchResults={searchResults}/>
             </div>
           );
-        })}
+        }): <p>There were no movies with that title</p>}
       </div>
     </div>
   );

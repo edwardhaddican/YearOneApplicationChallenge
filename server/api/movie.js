@@ -6,9 +6,6 @@ module.exports = router;
 
 router.get("/", async (req, res, next) => {
   try {
-    // const movies = await Movie.findAll();
-    // res.json(movies);
-
     const searchTitle = req.query.search;
 
     const searchTitleOptions = {
@@ -24,7 +21,40 @@ router.get("/", async (req, res, next) => {
     const results = await axios.request(searchTitleOptions);
     const resultsData = results.data.movie_results;
 
-    res.json(resultsData);
+    const imbdIDArray = resultsData.map((movie) => {
+      return movie.imdb_id;
+    });
+
+    const moviesFromDatabase = await Movie.findAll({
+      where: {
+        imdb_id: imbdIDArray,
+      },
+    });
+
+    const mergedResults = resultsData.map((movie) => {
+      const matchingMovieFromDatabase = moviesFromDatabase.find(
+        (databaseMovie) => {
+          if (databaseMovie.imdb_id === movie.imdb_id) {
+            return true;
+          }
+        }
+      );
+
+      // console.log('movie inside of merged results', movie)
+      if (!matchingMovieFromDatabase) {
+        return movie;
+      }
+
+      if (matchingMovieFromDatabase) {
+        return {
+          ...movie,
+          thumbsUp: matchingMovieFromDatabase.thumbsUp,
+          thumbsDown: matchingMovieFromDatabase.thumbsDown,
+        };
+      }
+    });
+
+    res.json(mergedResults);
   } catch (err) {
     next(err);
   }
@@ -44,28 +74,30 @@ router.get("/:id", async (req, res, next) => {
 
     const result = await axios.request(options);
     const resultsData = result.data;
-    res.json(resultsData);
+
+    const singleMovieFromDatabase = await Movie.findOne({
+      where: {
+        imdb_id: resultsData.imdb_id,
+      },
+    });
+
+    if (!singleMovieFromDatabase) {
+      res.json(resultsData);
+    } else {
+      res.json({
+        ...resultsData,
+        thumbsUp: singleMovieFromDatabase.thumbsUp,
+        thumbsDown: singleMovieFromDatabase.thumbsDown,
+      });
+    }
   } catch (err) {
     next(err);
   }
 });
 
-// router.post("/", async (req, res, next) => {
-//   try {
-//     const movie = await Movie.create({
-//       movieTitle: req.body.movieTitle,
-//       thumbsUp: req.body.thumbsUp,
-//       thumbsDown: req.body.thumbsDown,
-//     });
-//     res.status(201).json(movie);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
 router.put("/:id", async (req, res, next) => {
   try {
-    const isUpvote = req.body.isUpvote;
+    const { title, description, year, isUpvote, directors, genres } = req.body;
 
     const [movie, created] = await Movie.findOrCreate({
       where: {
@@ -74,6 +106,11 @@ router.put("/:id", async (req, res, next) => {
       defaults: {
         thumbsUp: isUpvote ? 1 : 0,
         thumbsDown: !isUpvote ? 1 : 0,
+        title,
+        description,
+        year,
+        genres,
+        directors,
       },
     });
 

@@ -7,6 +7,7 @@ const Voting = (props) => {
   const thumbsUpOrDown = async (isUpvote) => {
     const { data } = await axios.put(`/api/movie/${singleMovie.imdb_id}`, {
       isUpvote,
+      ...singleMovie
     });
 
     setSingleMovie(data);
