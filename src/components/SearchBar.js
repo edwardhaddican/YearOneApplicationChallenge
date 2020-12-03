@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import apiKey from '../secrets'
 
 const SearchBar = (props) => {
   const {
@@ -8,28 +7,37 @@ const SearchBar = (props) => {
     setSearchResults,
     searchTitleText,
     setSearchTitleText,
+    setLoading,
   } = props;
 
- const fetchMovie = async (event) => {
-   event.preventDefault();
+  const [errorMessage, setErrorMessage] = useState("");
 
-   try{
-     const results = await axios.get(`/api/movie?search=${searchTitleText}`)
-     console.log('results', results)
+  const fetchMovie = async (event) => {
+    event.preventDefault();
 
-    setSearchResults(results.data)
+    try {
+      setLoading(true);
+      const results = await axios.get(`/api/movie?search=${searchTitleText}`);
 
-
-   }catch (err){
-     console.log(err)
-   }
- }
+      if (results.data.length === 0) {
+        setErrorMessage("No movies matched your search");
+      } else {
+        setSearchResults(results.data);
+        setErrorMessage("");
+      }
+      setLoading(false);
+    } catch (err) {
+      setErrorMessage(err.message);
+    }
+  };
 
   return (
     <div className="searchbar_container">
       <div className="header">
-        <h2 >Movie Title</h2>
+        <h2>Search Movies</h2>
       </div>
+
+      {searchResults && <p className="error_message">{errorMessage}</p>}
 
       <div className="searchbar_inner_container">
         <form onSubmit={fetchMovie} className="searchbar_inner_container">

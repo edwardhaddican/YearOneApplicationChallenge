@@ -28,7 +28,7 @@ const Movie = db.define(
       type: Sequelize.STRING,
     },
     description: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
     },
     year: {
       type: Sequelize.STRING,

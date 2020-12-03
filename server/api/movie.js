@@ -21,6 +21,9 @@ router.get("/", async (req, res, next) => {
     const results = await axios.request(searchTitleOptions);
     const resultsData = results.data.movie_results;
 
+    if (results.data.search_results === 0) {
+      return res.json([]);
+    }
     const imbdIDArray = resultsData.map((movie) => {
       return movie.imdb_id;
     });
@@ -40,7 +43,6 @@ router.get("/", async (req, res, next) => {
         }
       );
 
-      // console.log('movie inside of merged results', movie)
       if (!matchingMovieFromDatabase) {
         return movie;
       }
@@ -97,8 +99,28 @@ router.get("/:id", async (req, res, next) => {
 
 router.put("/:id", async (req, res, next) => {
   try {
-    const { title, description, year, isUpvote, directors, genres } = req.body;
+    const options = {
+      method: "GET",
+      url: "https://movies-tvshows-data-imdb.p.rapidapi.com/",
+      params: { imdb: req.params.id, type: "get-movie-details" },
+      headers: {
+        "x-rapidapi-key": process.env.API_SECRET,
+        "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+      },
+    };
 
+    const result = await axios.request(options);
+    const resultsData = result.data;
+    const { isUpvote } = req.body;
+
+    const {
+      imbd_id,
+      title,
+      description,
+      year,
+      genres,
+      directors,
+    } = resultsData;
     const [movie, created] = await Movie.findOrCreate({
       where: {
         imdb_id: req.params.id,
@@ -106,6 +128,7 @@ router.put("/:id", async (req, res, next) => {
       defaults: {
         thumbsUp: isUpvote ? 1 : 0,
         thumbsDown: !isUpvote ? 1 : 0,
+        imbd_id,
         title,
         description,
         year,

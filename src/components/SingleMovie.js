@@ -1,61 +1,90 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import apiKey from "../secrets";
-import {Voting} from "./index"
+import { Voting, Loader } from "./index";
 
 /**
  * fetch('/api/endpoint/') to access my backend
  */
 
-const SingleMovie = (props) => {
+const SingleMovie = () => {
   const { movieId } = useParams();
-
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [singleMovie, setSingleMovie] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
+      setLoading(true);
       const movieData = await axios.get(`/api/movie/${movieId}`);
 
       setSingleMovie(movieData.data);
     } catch (err) {
-      console.log("O no, you have an error", err);
+      setErrorMessage(err.message);
     }
-  }, [movieId]);
+    setLoading(false);
+  }, [movieId, setLoading, setSingleMovie, setErrorMessage]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  if (!singleMovie) {
-    return <h1>Loading</h1>;
+  if (loading || !singleMovie) {
+    return <Loader />;
+  }
+
+  if (errorMessage) {
+    return <p className="error_message">{errorMessage}</p>;
   }
 
   return (
     <div className="single_movie_container">
       <h2>Title: {singleMovie.title}</h2>
       {singleMovie.directors ? (
-        <p>Director: {singleMovie.directors}</p>
+        <p>
+          <span className="single_movie_label">Director(s):</span>{" "}
+          {singleMovie.directors.join(", ")}
+        </p>
       ) : (
-        <p>Director: No directors are listed</p>
+        <p>
+          <span className="single_movie_label">Director(s):</span> No directors
+          are listed
+        </p>
       )}
-      <p>Description: {singleMovie.description}</p>
 
-      {singleMovie.year > 0 && <h6>Release Year: {singleMovie.year}</h6>}
+      {singleMovie.description ? (
+        <p>
+          <span className="single_movie_label">Description:</span>{" "}
+          {singleMovie.description}
+        </p>
+      ) : (
+        <p>
+          <span className="single_movie_label">Description:</span> No
+          descriptions is listed
+        </p>
+      )}
+
+      {singleMovie.year > 0 && (
+        <p>
+          {" "}
+          <span className="single_movie_label">Release Year:</span>{" "}
+          {singleMovie.year}
+        </p>
+      )}
 
       {singleMovie.genres ? (
-        <div className="single_movie_item_container">
-          <div>Genre:</div>
-          {singleMovie.genres.map((element, idx) => {
-            return <ul key={`${element} with the Id of: ${idx}`}>{element}</ul>;
-          })}
-        </div>
+        <p>
+          <span className="single_movie_label">Genre:</span>{" "}
+          {singleMovie.genres.join(", ")}
+        </p>
       ) : (
-        <p>Genre: No data listed </p>
+        <p>
+          {" "}
+          <span className="single_movie_label">Genre:</span>No data listed{" "}
+        </p>
       )}
 
-      <Voting singleMovie={singleMovie} setSingleMovie={setSingleMovie}/>
-
+      <Voting singleMovie={singleMovie} setSingleMovie={setSingleMovie} />
     </div>
   );
 };

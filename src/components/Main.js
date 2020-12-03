@@ -1,16 +1,13 @@
 import React from "react";
 import { AllMovies, SingleMovie, NavBar } from "./index";
-import {
-  Switch,
-  Route,
-  BrowserRouter as Router,
-  Redirect,
-} from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 const Main = () => {
   return (
-    <div>
-      <h1>Welcome to the hottest spot to search for movies</h1>
+    <div className="main_container">
+      <h1 className="main_title">
+        Welcome to the hottest spot to search for movies
+      </h1>
       <NavBar />
       <Switch>
         <Route
