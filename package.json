@@ -4,8 +4,8 @@
   "description": "An small web application for viewing movie details and voting for your favorites.",
   "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "start-dev": "NODE_ENV='development' npm run build & NODE_ENV='development' npm run start-server",
+    "start-dev": "NODE_ENV='development' react-scripts start",
+    "start": "NODE_ENV='production' npm run build & NODE_ENV='production' npm run start-server",
     "start-server": "nodemon server -e html,js,scss --ignore public --ignore src",
     "build": "react-scripts build && mv build ./server/public"
   },
